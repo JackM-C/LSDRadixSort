@@ -5,6 +5,11 @@ VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LSDRadixSort", "LSDRadixSort.csproj", "{36FAABB9-3C54-4146-B91D-4950C52E0E0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SortTests", "..\SortTests\SortTests.csproj", "{BE478283-0F23-407F-8296-3E16FD0189CA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{36FAABB9-3C54-4146-B91D-4950C52E0E0A} = {36FAABB9-3C54-4146-B91D-4950C52E0E0A}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +20,10 @@ Global
 		{36FAABB9-3C54-4146-B91D-4950C52E0E0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36FAABB9-3C54-4146-B91D-4950C52E0E0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36FAABB9-3C54-4146-B91D-4950C52E0E0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE478283-0F23-407F-8296-3E16FD0189CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE478283-0F23-407F-8296-3E16FD0189CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE478283-0F23-407F-8296-3E16FD0189CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE478283-0F23-407F-8296-3E16FD0189CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

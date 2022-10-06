@@ -11,77 +11,122 @@ namespace LSDRadixSort
         private static Random rnd = new Random();
         static void Main(string[] args)
         {
+            // Accept user input
+            Console.Write("Type some numbers (separated by spaces):");
+            string input = Console.ReadLine();
 
-            Console.Write("Enter array size: ");
-            bool arraySizeIsParsable = Int32.TryParse(Console.ReadLine(), out int arraySize);
-            if (!arraySizeIsParsable)
+            // Convert to array
+            string[] inputSplit = input.Split(' ');
+            int[] array = new int[inputSplit.Length];
+            for (int i=0; i < inputSplit.Length; i++)
             {
-                Console.WriteLine("Invalid array size.");
-                Console.ReadKey();
-                return;
+                try
+                {
+                    array[i] = Int32.Parse(inputSplit[i]);
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine("Invalid number in array.");
+                    Console.ReadKey();
+                    return;
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine("Input is empty.");
+                    Console.ReadKey();
+                    return;
+                }
             }
 
-            int radixSize = 10; // for now
-            //Console.Write("Enter radix size (2, 10, or 16): ");
-            //bool radixSizeIsParsable = Int32.TryParse(Console.ReadLine(), out int radixSize);
-            //bool validRadixSize = radixSize == 2 || radixSize == 10 || radixSize == 16;
-            //if (!(radixSizeIsParsable && validRadixSize))
-            //{
-            //    Console.WriteLine("Invalid radix size.");
-            //    Console.ReadKey();
-            //    return;
-            //}
+            // Perform Sort
+            int radix = 10;
+            Sort(array, radix);
+        }
 
-            Console.Write("Enter number length: ");
-            bool numberLengthIsParsable = Int32.TryParse(Console.ReadLine(), out int numberLength);
-            if (!numberLengthIsParsable || numberLength <= 0)
+        static void Sort(int[] array, int radix)
+        {
+            //Determine min and max values
+            int minValue = array[0];
+            int maxValue = array[0];
+            for (int i = 1; i < array.Length; i++)
             {
-                Console.WriteLine("Invalid number length.");
-                Console.ReadKey();
-                return;
+                if (array[i] < minValue)
+                {
+                    minValue = array[i];
+                }
+                else if (array[i] > maxValue)
+                {
+                    maxValue = array[i];
+                }
             }
 
-            string[] unsortedArray = GenerateArray(arraySize, radixSize, numberLength);
-            Console.Write("Your randomly generated array is: {");
-            foreach (var item in unsortedArray)
+            // Perform counting sort on each exponent/digit, starting at the least significant digit
+            int exponent = 1;
+            while ((maxValue - minValue) / exponent >= 1) // determines the highest exponent for which the array needs to be sorted
             {
-                Console.Write(" " + item);
+                CountingSortByDigit(array, radix, exponent, minValue);
+                exponent *= radix;
             }
-            Console.WriteLine(" }");
-            Console.WriteLine("Press any key to begin LSD Radix Sort...");
+
+            Console.Write("Array sorted!\n" +
+                "{ ");
+            foreach (var number in array)
+            {
+                Console.Write(number + " ");
+            }
+            Console.WriteLine("}");
+            Console.WriteLine("Press any key to quit...");
             Console.ReadKey();
-
-            for (int i = 0; i < numberLength; i++)
-            {
-                unsortedArray = Sort(unsortedArray, i, radixSize);
-            }
-
+            Console.WriteLine("That tickles!");
+            Console.ReadKey();
         }
 
-        static string[] GenerateArray(int arraySize, int radixSize, int numberLength)
+        static void CountingSortByDigit(int[] array, int radix, int exponent, int minValue)
         {
-            string[] unsortedArray = new string[arraySize];
-            for (int i = 0; i < unsortedArray.Length; i++)
-            {
-                unsortedArray[i] = RandomNumberString(numberLength, radixSize);
-            }
-            return unsortedArray;
-        }
+            int bucketIndex;
+            int[] buckets = new int[radix];
+            int[] output = new int[array.Length];
 
-        static string RandomNumberString(int numberLength, int radixSize)
-        {
-            string number = "";
-            for (int i = 0; i < numberLength; i++)
+            // Initialize the buckets for counting frequencies
+            for (int i=0; i < radix; i++)
             {
-                    number += rnd.Next(0, 9).ToString();
+                buckets[i] = 0;
             }
-            return number;
-        }
 
-        static string[] Sort(string[] unsortedArray, int position, int radixSize)
-        {
-            int[,] buckets = new int[, radixSize];
-            return unsortedArray;
+            // Count frequencies
+            for (int i=0; i < array.Length; i++)
+            {
+                bucketIndex = (int)(((array[i] - minValue) / exponent) % radix); // Modulo radix gets the digit at the exponent place in the number
+                buckets[bucketIndex]++;
+            }
+
+            // The sum of all buckets is equal to the size of our array.
+            // Computing the cumulates this way lets the bucketIndex determine the index of each item in our output array
+            for (int i=1; i < radix; i++)
+            {
+                buckets[i] += buckets[i - 1];
+            }
+
+            // Move records
+            for (int i=array.Length - 1; i >= 0; i--)
+            {
+                bucketIndex = (int)(((array[i] - minValue) / exponent) % radix);
+                output[--buckets[bucketIndex]] = array[i];
+            }
+
+            // Printing sorting stage
+            Console.Write("{ ");
+            for (int i=0; i < output.Length; i++)
+            {
+                Console.Write(output[i] + " ");
+            }
+            Console.WriteLine("}: Array state at exponent " + exponent);
+
+            // Copy back
+            for (int i=0; i < array.Length; i++)
+            {
+                array[i] = output[i];
+            }
         }
     }
 }
